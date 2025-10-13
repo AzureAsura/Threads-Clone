@@ -17,6 +17,8 @@ import { z } from "zod"
 import Image from 'next/image';
 import { Textarea } from '../ui/textarea';
 import { isBase64Image } from '@/lib/utils';
+import { useUploadThing } from '../../lib/validations/uploadthing';
+
 
 
 interface Props {
@@ -33,6 +35,8 @@ interface Props {
 
 const AccountProfile = ({ user, btnTitle }: Props) => {
     const [files, setFiles] = useState<File[]>([]);
+    const { startUpload } = useUploadThing("media");
+
 
     const form = useForm({
         resolver: zodResolver(UserValidation),
@@ -45,7 +49,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
     })
 
     const handleImage = (
-        e: ChangeEvent<HTMLInputElement>, 
+        e: ChangeEvent<HTMLInputElement>,
         fieldChange: (value: string) => void
     ) => {
         e.preventDefault();
@@ -67,20 +71,24 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
         }
     };
 
-    function onSubmit(values: z.infer<typeof UserValidation>) {
-    //    const blob = values.profile_photo
+    const onSubmit = async (values: z.infer<typeof UserValidation>) => {
+        const blob = values.profile_photo;
 
-    //    const hasImageChanged = isBase64Image(blob)
+        const hasImageChanged = isBase64Image(blob);
+        if (hasImageChanged) {
+            const imgRes = await startUpload(files);
 
-    //    if(hasImageChanged) {
-    //     const images = 
-    //    }
-    }
+            if (imgRes && imgRes[0].url) {
+                values.profile_photo = imgRes[0].url;
+            }
+
+        }
+    };
 
     return (
         <Form {...form}>
             <form
-                onSubmit={form.handleSubmit(onSubmit)} 
+                onSubmit={form.handleSubmit(onSubmit)}
                 className="flex flex-col justify-start gap-10"
             >
                 {/* Profile Picture */}
