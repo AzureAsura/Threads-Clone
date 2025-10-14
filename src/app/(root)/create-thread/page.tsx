@@ -2,6 +2,7 @@ import React from 'react'
 import { currentUser } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import { fetchUser } from '@/lib/actions/user.actions'
+import PostThread from '@/components/forms/PostThread'
 
 const page = async () => {
     const user = await currentUser()
@@ -13,7 +14,11 @@ const page = async () => {
     if(!userInfo?.onboarded) redirect('/onboarding')
 
   return (
-    <h1 className='head-text'>Create Threads</h1>
+    <>
+      <h1 className='head-text'>Create Threads</h1>
+
+      <PostThread userId={userInfo._id}/>
+    </>
   )
 }
 
