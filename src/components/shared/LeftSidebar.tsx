@@ -40,7 +40,7 @@ const LeftSidebar = () => {
                 <SignInButton>
                     <SignOutButton redirectUrl="/sign-in">
                         <div className='flex cursor-pointer gap-4 p-4'>
-                            <Image src="./logout.svg" alt='logout' width={24} height={24} />
+                            <Image src="/logout.svg" alt='logout' width={24} height={24} />
 
                             <p className='text-light-2 max-lg:hidden'>Logout</p>
                         </div>

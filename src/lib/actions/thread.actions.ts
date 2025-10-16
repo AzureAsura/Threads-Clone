@@ -5,6 +5,7 @@ import Thread from "../models/thread.model"
 import User from "../models/user.model"
 import { connectToDB } from "../mongoose"
 import path from "path"
+import { comment } from "postcss"
 
 interface Params {
     text: string,
@@ -104,4 +105,40 @@ export async function fetchThreadById(id: string){
     } catch (error: any) {
         throw new Error(`Error fetching thread: ${error.message}`)
     }
+}
+
+export async function addCommentToThread(
+    threadId: string,
+    commentText: string,
+    userId: string,
+    path: string,
+) {
+    connectToDB()
+
+    const originalThread = await Thread.findById(threadId)
+
+    if (!originalThread) {
+        throw new Error("Thread not found")
+    }
+
+    const commentThread = new Thread({
+        text: commentText,
+        author: userId,
+        parentId: threadId
+    })
+
+    const savedCommentThread = await commentThread.save()
+
+    originalThread.children.push(savedCommentThread._id)
+
+    await originalThread.save()
+
+    revalidatePath(path)
+
+    try {
+        
+    } catch (error:any) {
+        throw new Error(`Error adding comment to thread: ${error.message}`)
+    }
+    
 }
