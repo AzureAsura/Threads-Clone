@@ -27,9 +27,9 @@ const Topbar = () => {
                     appearance={{
                         baseTheme: dark,
                         elements: {
-                            organizationSwitcherTrigger: " py-2 px-4", // tombol utama
-                            organizationPreviewAvatarBox: "w-9 h-9", // ⬅️ ini gedein logonya
-                            organizationPreviewAvatarImage: "w-9 h-9", // biar pas juga
+                            organizationSwitcherTrigger: " py-2 px-4", 
+                            organizationPreviewAvatarBox: "w-9 h-9", 
+                            organizationPreviewAvatarImage: "w-9 h-9", 
 
                         }
                     }}

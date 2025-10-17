@@ -6,19 +6,33 @@ import { sidebarLinks } from '../../constants/index.js'
 import Link from 'next/link'
 import Image from 'next/image.js'
 import clsx from 'clsx'
+import { useAuth } from '@clerk/nextjs'
 
 const BottomBar = () => {
-      const pathname = usePathname()
-  
-  return (
-    <section className='bottombar'>
-      <div className='bottombar_container'>
-          {sidebarLinks.map((links) => {
+    const pathname = usePathname()
+    const { userId } = useAuth()
 
-                    const isActive = (pathname.includes(links.route) && links.route.length > 1) || pathname === links.route;
+    return (
+        <section className='bottombar'>
+            <div className='bottombar_container'>
+                {sidebarLinks.map((links) => {
+
+                    // const isActive = (pathname.includes(links.route) && links.route.length > 1) || pathname === links.route;
+
+
+                    const href = links.route === "/profile" && userId
+                        ? `/profile/${userId}`
+                        : links.route;
+
+                    let isActive;
+                    if (links.route === "/profile") {
+                        isActive = pathname === `/profile/${userId}`;
+                    } else {
+                        isActive = (pathname.includes(links.route) && links.route.length > 1) || pathname === links.route;
+                    }
 
                     return (
-                        <Link href={links.route} key={links.label}
+                        <Link href={href} key={links.label}
                             className={clsx('bottombar_link', isActive && 'bg-primary-500')}
                         >
                             <Image
@@ -32,9 +46,9 @@ const BottomBar = () => {
                         </Link>
                     )
                 })}
-      </div>
-    </section>
-  )
+            </div>
+        </section>
+    )
 }
 
 export default BottomBar

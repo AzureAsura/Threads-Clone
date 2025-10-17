@@ -1,38 +1,55 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import React from 'react'
-import { sidebarLinks } from '../../constants/index.js'
-import Image from 'next/image'
-import { useRouter, usePathname } from 'next/navigation'
-import clsx from 'clsx'
-import { SignInButton, SignOutButton } from '@clerk/nextjs'
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { SignOutButton, SignInButton, useAuth } from "@clerk/nextjs";
+
+import { sidebarLinks } from "../../constants";
 
 const LeftSidebar = () => {
     const router = useRouter();
-    const pathname = usePathname()
+    const pathname = usePathname();
+
+    const { userId } = useAuth();
 
     return (
         <section className='custom-scrollbar leftsidebar'>
             <div className='flex w-full flex-1 flex-col gap-6 px-6'>
-                {sidebarLinks.map((links) => {
+                {sidebarLinks.map((link) => {
+                    // const isActive =
+                    //     (pathname.includes(link.route) && link.route.length > 1) ||
+                    //     pathname === link.route;
 
-                    const isActive = (pathname.includes(links.route) && links.route.length > 1) || pathname === links.route;
+                    // if (link.route === "/profile") link.route = `${link.route}/${userId}`;
+
+                     const href = link.route === "/profile" && userId
+                        ? `/profile/${userId}`
+                        : link.route;
+
+                    let isActive;
+                    if (link.route === "/profile") {
+                        isActive = pathname === `/profile/${userId}`;
+                    } else {
+                        isActive = (pathname.includes(link.route) && link.route.length > 1) || pathname === link.route;
+                    }
 
                     return (
-                        <Link href={links.route} key={links.label}
-                            className={clsx('leftsidebar_link', isActive && 'bg-primary-500')}
+                        <Link
+                            href={href}
+                            key={link.label}
+                            className={`leftsidebar_link ${isActive && "bg-primary-500 "}`}
                         >
                             <Image
-                                src={links.imgURL}
-                                alt={links.label}
+                                src={link.imgURL}
+                                alt={link.label}
                                 width={24}
                                 height={24}
                             />
 
-                            <p className='text-light-1 max-lg:hidden'>{links.label}</p>
+                            <p className='text-light-1 max-lg:hidden'>{link.label}</p>
                         </Link>
-                    )
+                    );
                 })}
             </div>
 
@@ -48,7 +65,7 @@ const LeftSidebar = () => {
                 </SignInButton>
             </div>
         </section>
-    )
-}
+    );
+};
 
-export default LeftSidebar
+export default LeftSidebar;

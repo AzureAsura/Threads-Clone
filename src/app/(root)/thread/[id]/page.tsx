@@ -33,7 +33,7 @@ const page = async (props: { params: Promise<{ id: string }> }) => {
                     comments={thread.children}
                 />
             </div>
-
+ 
             <div className="mt-7">
                 <Comment
                     threadId={thread.id}
