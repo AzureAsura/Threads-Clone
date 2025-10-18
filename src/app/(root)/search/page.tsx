@@ -8,10 +8,14 @@ import SearchBar from '@/components/shared/SearchBar'
 
 const page = async ({
     searchParams,
-} : {
-    searchParams: { [key: string]: string | undefined}
+}: {
+    searchParams: Promise<{ [key: string]: string | undefined }>
 }) => {
+
+    const params = await searchParams
+
     const user = await currentUser()
+
 
     if (!user) return null;
 
@@ -20,8 +24,8 @@ const page = async ({
 
     const result = await fetchUsers({
         userId: user.id,
-        searchString: searchParams.q,
-        pageNumber: searchParams?.page ? +searchParams.page : 1,
+        searchString: params.q || "",
+        pageNumber: params?.page ? +params.page : 1,
         pageSize: 25
     })
 
@@ -29,7 +33,7 @@ const page = async ({
         <div>
             <h1 className='head-text mb-10'>Search</h1>
 
-            <SearchBar routeType='search'/>
+            <SearchBar routeType='search' />
 
             <div className='mt-14 flex flex-col gap-9'>
                 {result.user.length === 0 ? (
@@ -37,7 +41,7 @@ const page = async ({
                 ) : (
                     <>
                         {result.user.map((person) => (
-                            <UserCard 
+                            <UserCard
                                 key={person.id}
                                 id={person.id}
                                 name={person.name}
@@ -48,7 +52,7 @@ const page = async ({
                         ))}
                     </>
                 )}
-            </div>  
+            </div>
         </div>
     )
 }
