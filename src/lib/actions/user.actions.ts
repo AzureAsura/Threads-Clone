@@ -16,7 +16,7 @@ interface Props {
 
 }
 
-interface FetchUsersProps{
+interface FetchUsersProps {
     userId: string,
     searchString?: string,
     pageNumber?: number,
@@ -31,32 +31,32 @@ export async function updateUser({
     bio,
     image,
     path
-}: Props):Promise<void>{
+}: Props): Promise<void> {
     connectToDB();
 
     try {
         await User.findOneAndUpdate(
-        { id: userId},
-        {
-            username: username.toLowerCase(),
-            name,
-            bio,
-            image,
-            onboarded: true,
-        },
-        { upsert: true }
-    )
+            { id: userId },
+            {
+                username: username.toLowerCase(),
+                name,
+                bio,
+                image,
+                onboarded: true,
+            },
+            { upsert: true }
+        )
 
-    if (path === '/profile/edit') {
-        revalidatePath(path)
-    }
+        if (path === '/profile/edit') {
+            revalidatePath(path)
+        }
 
     } catch (error: any) {
         throw new Error(`Failed to create/update user: ${error.message}`)
     }
 }
 
-export async function fetchUser (userId: string){
+export async function fetchUser(userId: string) {
     try {
         connectToDB()
 
@@ -66,7 +66,7 @@ export async function fetchUser (userId: string){
     }
 }
 
-export async function fetchUserPosts(userId: string){
+export async function fetchUserPosts(userId: string) {
     try {
         connectToDB()
 
@@ -85,13 +85,13 @@ export async function fetchUserPosts(userId: string){
                 }
             })
 
-            return threads;
+        return threads;
     } catch (error: any) {
         throw new Error(`failed to fetch user posts: ${error.message}`)
     }
 }
 
-export async function fetchUsers ({
+export async function fetchUsers({
     userId,
     searchString = "",
     pageNumber = 1,
@@ -127,14 +127,40 @@ export async function fetchUsers ({
             .skip(skipAmount)
             .limit(pageSize)
 
-            const totalUsersCount = await User.countDocuments(query)
+        const totalUsersCount = await User.countDocuments(query)
 
-            const user = await usersQuery.exec()
+        const user = await usersQuery.exec()
 
-            const isNext = totalUsersCount > skipAmount + user.length
+        const isNext = totalUsersCount > skipAmount + user.length
 
-            return { user, isNext}
+        return { user, isNext }
     } catch (error: any) {
-        throw new Error (`failed to fetch users: ${error.message}`)
+        throw new Error(`failed to fetch users: ${error.message}`)
+    }
+}
+
+export async function getActivity(userId: string) {
+    try {
+        connectToDB()
+
+        const userThreads = await Thread.find({ author: userId })
+
+        const childThreadId = userThreads.reduce((acc, userThreads) => {
+            return acc.concat(userThreads.children)
+        }, [])
+
+        const replies = await Thread.find({
+            _id: { $in: childThreadId },
+            author: { $ne: userId }
+        }).populate({
+            path: "author",
+            model: User,
+            select: "name image _id"
+        })
+
+        return replies
+    } catch (error) {
+        console.error("Error fetching replies: ", error);
+        throw error;
     }
 }
