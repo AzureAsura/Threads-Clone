@@ -2,6 +2,8 @@ import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import clsx from 'clsx'
+import { formatDateString } from '@/lib/utils'
+import DeleteThread from '../forms/DeleteThread'
 
 interface Props {
     id: string,
@@ -63,16 +65,16 @@ const ThreadCard = ({
 
                         <p className='mt-2 text-small-regular text-light-2'>{content}</p>
 
-                        <div className={clsx ('mt-5 flex flex-col gap-3', isComment && 'mb-10')}>
+                        <div className={clsx('mt-5 flex flex-col gap-3', isComment && 'mb-10')}>
                             <div className='flex gap-3.5'>
-                                <Image src="/heart-gray.svg" alt='heart' width={24} height={24} className='cursor-pointer object-contain'/>
+                                <Image src="/heart-gray.svg" alt='heart' width={24} height={24} className='cursor-pointer object-contain' />
 
                                 <Link href={`/thread/${id}`}>
-                                    <Image src="/reply.svg" alt='reply' width={24} height={24} className='cursor-pointer object-contain'/>
+                                    <Image src="/reply.svg" alt='reply' width={24} height={24} className='cursor-pointer object-contain' />
                                 </Link>
 
-                                <Image src="/repost.svg" alt='repost' width={24} height={24} className='cursor-pointer object-contain'/>
-                                <Image src="/share.svg" alt='share' width={24} height={24} className='cursor-pointer object-contain'/>
+                                <Image src="/repost.svg" alt='repost' width={24} height={24} className='cursor-pointer object-contain' />
+                                <Image src="/share.svg" alt='share' width={24} height={24} className='cursor-pointer object-contain' />
                             </div>
 
                             {isComment && comments.length > 0 && (
@@ -83,7 +85,36 @@ const ThreadCard = ({
                         </div>
                     </div>
                 </div>
+
+                {/* Delete Thread Task */}
+                <DeleteThread
+                    threadId={JSON.stringify(id)}
+                    currentUserId={currentUserId}
+                    authorId={author.id}
+                    parentId={parentId}
+                    isComment={isComment}
+                />
             </div>
+                {!isComment && comments.length > 0 && (
+                    <div className='ml-1 mt-3 flex items-center gap-2'>
+                        {comments.slice(0, 2).map((comment, index) => (
+                            <Image
+                                key={index}
+                                src={comment.author.image}
+                                alt={`user ${index}`}
+                                width={24}
+                                height={24}
+                                className={`${index !== 0 && "-ml-5"} rounded-full object-cover`}
+                            />
+                        ))}
+
+                        <Link href={`/thread/${id}`}>
+                            <p className='mt-1 text-subtle-medium text-gray-1'>
+                                {comments.length} repl{comments.length > 1 ? "ies" : "y"}
+                            </p>
+                        </Link>
+                    </div>
+                )}
         </div>
     )
 }

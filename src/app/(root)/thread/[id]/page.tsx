@@ -44,18 +44,19 @@ const page = async (props: { params: Promise<{ id: string }> }) => {
 
             <div className="mt-10">
                 {thread.children.map((childItem: any) => (
-                    <ThreadCard
-                        key={childItem._id}
-                        id={childItem._id}
-                        currentUserId={childItem?.id || ""}
-                        parentId={childItem.parentId}
-                        content={childItem.text}
-                        author={childItem.author}
-                        community={childItem.community}
-                        createdAt={childItem.createdAt}
-                        comments={childItem.children}
-                        isComment
-                    />
+                    <div key={childItem._id} className="mt-3">
+                        <ThreadCard
+                            id={childItem._id}
+                            currentUserId={user.id}
+                            parentId={childItem.parentId}
+                            content={childItem.text}
+                            author={childItem.author}
+                            community={childItem.community}
+                            createdAt={childItem.createdAt}
+                            comments={childItem.children}
+                            isComment
+                        />
+                    </div>
                 ))}
             </div>
         </div>
