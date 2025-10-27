@@ -30,10 +30,26 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "utfs.io", // <-- TAMBAH INI
+        hostname: "utfs.io",
       },
     ],
   },
+  // OPSIONAL: Tambahan optimization
+  webpack: (config, { isServer }) => {
+    // Reduce Mongoose bundle size
+    if (isServer) {
+      config.externals.push({
+        'mongodb-client-encryption': 'commonjs mongodb-client-encryption',
+        'aws4': 'commonjs aws4',
+        'snappy': 'commonjs snappy',
+      });
+    }
+    return config;
+  },
+  // Compress output
+  compress: true,
+  // Power mode untuk production
+  poweredByHeader: false,
 };
 
 export default nextConfig;
