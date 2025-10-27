@@ -25,7 +25,6 @@
 //     }
 // }
 
-
 import mongoose from 'mongoose'
 
 let isConnected = false;
@@ -61,7 +60,7 @@ export const connectToDB = async () => {
     // Kalau belum ada promise, buat koneksi baru dengan pooling
     if (!cached.promise) {
         const opts = {
-            bufferCommands: false,
+            bufferCommands: true, // ← INI YANG PENTING! SET TRUE
             maxPoolSize: 10,
             minPoolSize: 2,
             serverSelectionTimeoutMS: 10000,
