@@ -53,7 +53,6 @@ Built for performance and developer experience using **Turbopack**, **Tailwind C
 
 ## 🖼️ Screenshots
 
-```markdown
 ![Homepage](/public/sshome.png)
 
 
